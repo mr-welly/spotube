@@ -8,6 +8,12 @@
   <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
   <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
 
+  <!-- Declares this build as valid for car head units. Without it Android Auto
+       filters the app out of the vehicle app picker entirely. -->
+  <uses-feature
+    android:name="android.hardware.type.automotive"
+    android:required="false" />
+
   <queries>
     <!-- If your app opens https URLs -->
     <intent>
@@ -79,14 +85,19 @@
     </activity>
 
     <!-- AudioService Config -->
-    <service
-      android:name="com.ryanheise.audioservice.AudioService"
-      android:exported="true"
-      android:foregroundServiceType="mediaPlayback">
-      <intent-filter>
-        <action android:name="android.media.browse.MediaBrowserService" />
-      </intent-filter>
-    </service>
+        <service
+          android:name="com.ryanheise.audioservice.AudioService"
+          android:exported="true"
+          android:foregroundServiceType="mediaPlayback">
+          <intent-filter>
+            <action android:name="android.media.browse.MediaBrowserService" />
+          </intent-filter>
+          <!-- Android Auto connects through MediaSessionService on modern head units;
+               without this the browse tree never appears in the car. -->
+          <intent-filter>
+            <action android:name="android.media.session.MediaSessionService" />
+          </intent-filter>
+        </service>
     <receiver
       android:name="com.ryanheise.audioservice.MediaButtonReceiver"
       android:exported="true">
